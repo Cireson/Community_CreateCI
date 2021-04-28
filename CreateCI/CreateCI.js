@@ -9,14 +9,22 @@ $(document).ready(function() {
     
     var ciClasses = [
         {
-            displayName: "Shared Folder",
-            classId: "be4ba234-45fd-42a8-9b83-ccf52b002624",
-            icon: "folder-o"
+            displayName: "Business Service",
+            classId: "b2a806a6-87f6-0bc9-da74-c27e9ab5a5d7",
+            icon: "cogs",
+            guidKey: "ServiceID"
         },
         {
             displayName: "Shared Mailbox",
             classId: "dbb1c397-8854-2f7f-0e13-71685d0186ed",
-            icon: "envelope-o"
+            icon: "envelope-o",
+            guidKey: null
+        },
+        {
+            displayName: "Shared Folder",
+            classId: "be4ba234-45fd-42a8-9b83-ccf52b002624",
+            icon: "folder-o",
+            guidKey: null
         }
     ];
 
@@ -35,7 +43,7 @@ $(document).ready(function() {
 
     ciClasses.forEach(function(ciClass) { 
         
-        menu2 += `        <li class="drawer-button config-item-drawer1" data-click="open" data-desc="` + ciClass.displayName + `" data-click-template="` + ciClass.classId + `">
+        menu2 += `        <li class="drawer-button config-item-drawer1" data-click="open" data-desc="` + ciClass.displayName + `" data-click-template="` + ciClass.classId + `" data-click-guidkey="` + ciClass.guidKey + `">
                 <i class="drawer-icon fa fa-` + ciClass.icon + `"></i>
                 <span class="drawermenu-tile-link">` + ciClass.displayName + `</span>
             </li>`;
@@ -63,14 +71,14 @@ $(document).ready(function() {
             },
             function (){  }
         ).click(function () {
-            newCI(this.attributes["data-click-template"].value);
+            newCI(this.attributes["data-click-template"].value, this.attributes["data-click-guidkey"].value,);
             $('.drawermenu-tile[data-level="1"] > ul > li').removeClass('drawermenu-selected');
             $('.config-item-drawer1').addClass('drawermenu-selected');
         });
     });
 });
 
-function newCI (classId) {
+function newCI (classId, guidKey) {
     ciObject = {
         ObjectStatus: {
             Id: "acdcedb7-100c-8c91-d664-4629a218bd94"
@@ -78,6 +86,10 @@ function newCI (classId) {
         ClassTypeId: classId,
         TimeAdded: "0001-01-01T00:00:00.000Z"
     };
+
+    if (guidKey) {
+        ciObject[guidKey] = app.lib.newGUID();
+    }
     
     var strData = {
         formJson: {
